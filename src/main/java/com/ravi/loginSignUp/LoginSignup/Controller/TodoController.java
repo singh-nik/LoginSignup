@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @SessionAttributes("name")
@@ -24,6 +26,9 @@ public class TodoController {
     UserRepoImp userRepo;
     @Autowired
     ToDoRepo toDoRepo;
+
+    Map<String ,String> table=new HashMap<String,String>();
+
 
     @RequestMapping(value="/AddToDo",method= RequestMethod.GET)
     public String getAddToDO(ModelMap m)
@@ -39,7 +44,7 @@ public class TodoController {
     {
      m.put("sucess","ToDO is SucessFully Added ");
      String username=(String)m.get("name");
-
+      String finalData=title+"  "+desc;
         List<UserEntity> userInfo=userRepo.findByUserName(username);
         if(!userInfo.isEmpty()) {
             String s = String.valueOf(userInfo.get(0));
@@ -51,6 +56,7 @@ public class TodoController {
 
 
         }
+        table.put(finalData,username);
         //toDoRepo.save();
         return "AddToDo";
     }
@@ -58,21 +64,45 @@ public class TodoController {
     @RequestMapping(value="/listTodo",method= RequestMethod.GET)
     public String displayToDO(ModelMap m)
     {
-        List<ToDoEntity> user2=toDoRepo.findByUseriId();
+        String username=(String)m.get("name");
+        //List<ToDoEntity> user2=toDoRepo.findByUseriId();
+        table.put("demoDate  demo on coming monday","demok");
+        table.put("gamedate  on 24july,2020","demok");
+        table.put("exam date  exam on coming saturday","demok");
+        /*if(user2.size()>=1) {
+            String s = String.valueOf(user2.get(0));
+            System.out.println(s + "  -------------------------");
+            String title = null;
+            String desc = null;
+            for (int i = 0; i < user2.size(); i++) {
+                String tokens[] = s.split(" ");
 
-        String s = String.valueOf(user2.get(0));
-        System.out.println(s+"  -------------------------");
-        String tokens[]=s.split(" ");
-        String title=tokens[0];
-        String desc=tokens[1];
-        m.put("title",title);
-        m.put("desc",desc);
+                title = tokens[0];
+                System.out.println(title);
+                desc = tokens[1];
+                System.out.println(desc);
+                table.put(title, desc);
+            }
 
+        }*/
+        HashMap<String,String> data=new HashMap<String,String>();
+        for(Map.Entry mapElement : table.entrySet()){
+
+            String key=(String)mapElement.getKey();
+            String value=(String)mapElement.getValue();
+            if(username.equals(value))
+            {
+                String s[]=key.split("  ");
+              data.put(s[0],s[1]);
+            }
+
+        }
+        m.addAttribute("mytable",data);
 
 
         return "listTodo";
     }
-    @RequestMapping(value="/listTodo",method= RequestMethod.POST)
+    /*@RequestMapping(value="/listTodo",method= RequestMethod.POST)
     public String displayPostToDO(ModelMap m)
     {
         List<ToDoEntity> user2=toDoRepo.findByUseriId();
@@ -88,7 +118,7 @@ public class TodoController {
 
 
         return "listTodo";
-    }
+    }*/
 
 
 
